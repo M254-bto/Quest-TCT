@@ -1,0 +1,12 @@
+Quest Project Description:
+
+An attendance tracking system for quest children fellowship.
+The system consists of a database containing information about all the children, ie Name, Date of birth, Age, Parent's Name, Parent's contacts and Residence.
+
+On a day being used, it's supposed to record the current date, then if a child's record is in the database, the system marks attendance by allowing the user to record a card number. There are physical cards handed to the parents used to sign out.
+
+On signing out the systems operator should search for the card number, then signs that child out.
+
+There are two classes divided by age, but the sign in and sighn out is the same.
+
+questdb: OaSq22ziF7siJPu5s
