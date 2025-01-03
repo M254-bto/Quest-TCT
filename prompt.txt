@@ -10,3 +10,13 @@ On signing out the systems operator should search for the card number, then sign
 There are two classes divided by age, but the sign in and sighn out is the same.
 
 questdb: OaSq22ziF7siJPu5s
+
+
+{
+  "name":"Test Child",
+  "date_of_birth": "2002-01-14",
+  "age": 21,
+  "parent_name": "Mike",
+  "parent_contacts": "01982374",
+  "residence": "Runda"
+}
