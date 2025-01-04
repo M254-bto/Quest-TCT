@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 
 # Create your models here.
 from django.db import models
@@ -12,16 +13,20 @@ class Child(models.Model):
     residence = models.CharField(max_length=100)
     room = models.CharField(max_length=100)
 
+    class meta:
+        verbose_name = 'Child'
+        verbose_name_plural = 'Children'
+
     def __str__(self):
         return self.name
 
 
-class Attendance(models.Model):
-    child = models.ForeignKey(Child, on_delete=models.CASCADE)
-    date = models.DateField(auto_now=True)
-    check_in = models.BooleanField()
-    check_out = models.BooleanField()
 
+class Attendance(models.Model):
+    child = models.ForeignKey('Child', on_delete=models.CASCADE)
+    check_in_time = models.DateTimeField(default=now)
+    check_out_time = models.DateTimeField(null=True, blank=True)
+    card_number = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
-        return self.child.name
+        return f"{self.child.name} - {self.card_number}"

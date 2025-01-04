@@ -1,40 +1,34 @@
 import pandas as pd
-from sqlalchemy import create_engine
+import requests
 
-# Database connection details
-DB_HOST = 'aws-0-us-east-1.pooler.supabase.com'
-DB_NAME = 'postgres'
-DB_USER = 'postgres.vacehxsjgutxtemyvmti'
-DB_PASSWORD = 'NQJ8bVVpwNYDb8dw'
-DB_PORT = 6543
-
-# Function to clean and migrate the CSV
-def clean_and_migrate_csv(csv_file, table_name):
+# Function to clean the CSV and post data to the Django backend
+def clean_and_post_csv(csv_file, api_endpoint):
     try:
         # Load the CSV file into a pandas DataFrame
         df = pd.read_csv(csv_file)
 
         # Replace missing values
-        for column in df.columns:
-            if pd.api.types.is_numeric_dtype(df[column]):
-                df[column].fillna(0, inplace=True)
-            elif pd.api.types.is_string_dtype(df[column]):
-                df[column].fillna('n/a', inplace=True)
+        
 
-        # Connect to the PostgreSQL database
-        engine = create_engine(f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}')
+         #Ensure no NaN values remain in the DataFrame
+        df = df.fillna('')  # Fallback to empty strings if any NaN persists
 
-        # Migrate the DataFrame to the PostgreSQL table
-        df.to_sql(table_name, engine, if_exists='replace', index=False)
-        print(f"Data successfully migrated to the '{table_name}' table in the database.")
+        # Post each row to the Django backend
+        for _, row in df.iterrows():
+            child_data = row.to_dict()  # Convert row to a dictionary
+            response = requests.post(api_endpoint, json=child_data)
+            if response.status_code == 201:  # 201 Created
+                print(f"Successfully created: {child_data['name']}")
+            else:
+                print(f"Failed to create: {response.json()}")
 
     except Exception as e:
         print(f"An error occurred: {e}")
 
 # Main script
 if __name__ == "__main__":
-    # Replace with your CSV file path and desired PostgreSQL table name
+    # Replace with your CSV file path and Django API endpoint
     csv_file_path = 'Docs/quest.csv'
-    target_table_name = "attendance_child"
+    api_endpoint_url = 'http://localhost:8000/'  # Replace with your actual API endpoint
 
-    clean_and_migrate_csv(csv_file_path, target_table_name)
+    clean_and_post_csv(csv_file_path, api_endpoint_url)
