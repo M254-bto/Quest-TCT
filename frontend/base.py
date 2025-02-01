@@ -61,7 +61,7 @@ st.title("Check-In")
 # Search for a child by name
 search_name = st.text_input("Search Child Name")
 if st.button("Search"):
-    search_response = requests.get("http://localhost:8000/search/", params={"search": search_name})
+    search_response = requests.get("https://quest-tct.onrender.com/search/", params={"search": search_name})
     if search_response.status_code == 200:
         children = search_response.json()
         if children:
@@ -71,7 +71,7 @@ if st.button("Search"):
         else:
             st.session_state.children = []  # Clear previous results
             st.warning("No children found")
-            add_child_form("http://localhost:8000/")
+            add_child_form("https://quest-tct.onrender.com/")
            
             
     else:
@@ -79,7 +79,7 @@ if st.button("Search"):
 
 
 if st.button('add child'):
-    add_child_form("http://localhost:8000/")
+    add_child_form("https://quest-tct.onrender.com/")
 
 # Show select box if there are search results
 if st.session_state.children:
@@ -96,13 +96,13 @@ if st.session_state.children:
 if st.session_state.selected_child:
     st.write(f"Selected Child: {st.session_state.selected_child}")
     child_id = st.session_state.selected_child.split(":")[0]  # Extract child ID
-    check_in_form("http://localhost:8000/check-in/", child_id)
+    check_in_form("https://quest-tct.onrender.com/check-in/", child_id)
 
 st.markdown("---")
 
 st.title("Check-Out")
 
-check_out_form("http://localhost:8000/check-out/")
+check_out_form("https://quest-tct.onrender.com/check-out/")
 
 
 
@@ -111,7 +111,7 @@ st.markdown("---")
 
 st.markdown("### Cards not checked out today")
 # Get cards not checked out today  and diplay card  number and name
-response = requests.get("http://localhost:8000/unchecked/")
+response = requests.get("https://quest-tct.onrender.com/unchecked/")
 if response.status_code == 200:
     children = response.json()
     if children:
@@ -130,7 +130,7 @@ if response.status_code == 200:
 st.markdown("---")
 st.markdown("### Total Number of Children Checked In Today")
 # Get total number of children checked in today
-response = requests.get("http://localhost:8000/count/")
+response = requests.get("https://quest-tct.onrender.com/count/")
 if response.status_code == 200:
     data = response.json()
     st.write(f"Total Children: {data['total_children']}")
