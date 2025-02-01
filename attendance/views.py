@@ -86,11 +86,14 @@ class CheckOutView(APIView):
         except Attendance.DoesNotExist:
             return Response({"error": "Attendance record not found or already checked out"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Mark as checked out
+        # Mark as checked out and set card number to empty
         attendance.check_out_time = now()
+        # attendance.card_number = ''
+        attendance.card_number = ''
         attendance.save()
-        serializer = AttendanceSerializer(attendance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"message": "Check-out successful"}, status=status.HTTP_200_OK)
+    
+        
     
 
 
@@ -111,3 +114,18 @@ class ChildrenNotCheckedOut(ListAPIView):
     def get_queryset(self):
         today = now().date()
         return Attendance.objects.filter(check_out_time__isnull=True, check_in_time__date=today)
+    
+
+
+class AttendanceCount(APIView):
+    def get(self, request):
+        today = now().date()
+        total_children = Child.objects.count()
+        checked_in_children = Attendance.objects.filter(check_in_time__date=today).count()
+        checked_out_children = Attendance.objects.filter(check_out_time__date=today).count()
+        return Response({
+            "total_children": total_children,
+            "checked_in_children": checked_in_children,
+            "checked_out_children": checked_out_children
+        })
+    

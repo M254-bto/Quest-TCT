@@ -4,6 +4,7 @@ import streamlit as st
 import requests
 
 def add_child_form(api_url):
+    print("Form called")
     """
     Displays a form for adding a new child and sends a POST request to the given API URL.
 
@@ -11,28 +12,40 @@ def add_child_form(api_url):
         api_url (str): The endpoint to which the new child data should be sent.
     """
     with st.form("add_child_form", clear_on_submit=True):
+        print("Form displayed")
         new_name = st.text_input("Child's Name", key="new_name")
         dob = st.date_input("Date of Birth", key="dob")
         age = st.number_input("Age", min_value=0, step=1, key="age")
         parent_name = st.text_input("Parent's Name", key="parent_name")
         parent_contact = st.text_input("Parent's Contact", key="parent_contact")
         residence = st.text_input("Residence", key="residence")
+        room = st.text_input("Class", key="room")
         submit = st.form_submit_button("Add Child")
 
         if submit:
+            print("form submitted")
             add_response = requests.post(api_url, json={
                 "name": new_name,
                 "date_of_birth": str(dob),
                 "age": age,
                 "parent_name": parent_name,
-                "parent_contact": parent_contact,
+                "parent_contacts": parent_contact,
                 "residence": residence,
+                "room": room
             })
 
-            if add_response.status_code == 201:
-                st.success("Child added successfully!")
+            if add_response.ok:
+                response_data = add_response.json()
+                if "error" in response_data:
+                    st.error(f"Error adding child: {response_data.get('error')}")
+                else:
+                    st.success("Child added successfully!")
             else:
-                st.error(f"Error adding child: {add_response.text}")
+                st.error(f"Failed: {add_response.status_code}, {add_response.text}")
+
+
+# add_child_form("http://localhost:8000/")
+
 
 
 
