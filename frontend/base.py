@@ -1,47 +1,47 @@
 import streamlit as st
 import requests
-from forms import check_in_form, check_out_form
+from forms import check_in_form, check_out_form, add_child_form
 
 # if st.button('add_child'):
 #     add_child_form("http://localhost:8000/")
 
 
-def add_child_form(api_url):
-    print("Form called")
-    """
+# def add_child_form(api_url):
+#     print("Form called")
+#     """
     
-    """
-    with st.form("add_child_form", clear_on_submit=True):
-        print("Form displayed")
-        new_name = st.text_input("Child's Name", key="new_name")
-        dob = st.date_input("Date of Birth", key="dob")
-        age = st.number_input("Age", min_value=0, step=1, key="age")
-        parent_name = st.text_input("Parent's Name", key="parent_name")
-        parent_contact = st.text_input("Parent's Contact", key="parent_contact")
-        residence = st.text_input("Residence", key="residence")
-        room = st.text_input("Class", key="room")
-        submit = st.form_submit_button("Add Child")
+#     """
+#     with st.form("add_child_form", clear_on_submit=True):
+#         print("Form displayed")
+#         new_name = st.text_input("Child's Name", key="new_name")
+#         dob = st.date_input("Date of Birth", key="dob")
+#         age = st.number_input("Age", min_value=0, step=1, key="age")
+#         parent_name = st.text_input("Parent's Name", key="parent_name")
+#         parent_contact = st.text_input("Parent's Contact", key="parent_contact")
+#         residence = st.text_input("Residence", key="residence")
+#         room = st.text_input("Class", key="room")
+#         submit = st.form_submit_button("Add Child")
 
-        if submit:
-            print("form submitted")
-            add_response = requests.post(api_url, json={
-                "name": new_name,
-                "date_of_birth": str(dob),
-                "age": age,
-                "parent_name": parent_name,
-                "parent_contacts": parent_contact,
-                "residence": residence,
-                "room": room
-            })
+#         if submit:
+#             print("form submitted")
+#             add_response = requests.post(api_url, json={
+#                 "name": new_name,
+#                 "date_of_birth": str(dob),
+#                 "age": age,
+#                 "parent_name": parent_name,
+#                 "parent_contacts": parent_contact,
+#                 "residence": residence,
+#                 "room": room
+#             })
 
-            if add_response.ok:
-                response_data = add_response.json()
-                if "error" in response_data:
-                    st.error(f"Error adding child: {response_data.get('error')}")
-                else:
-                    st.success("Child added successfully!")
-            else:
-                st.error(f"Failed: {add_response.status_code}, {add_response.text}")
+#             if add_response.ok:
+#                 response_data = add_response.json()
+#                 if "error" in response_data:
+#                     st.error(f"Error adding child: {response_data.get('error')}")
+#                 else:
+#                     st.success("Child added successfully!")
+#             else:
+#                 st.error(f"Failed: {add_response.status_code}, {add_response.text}")
 
 
 
@@ -71,15 +71,15 @@ if st.button("Search"):
         else:
             st.session_state.children = []  # Clear previous results
             st.warning("No children found")
-            add_child_form("https://quest-tct.onrender.com/")
+            # add_child_form("https://quest-tct.onrender.com/")
            
             
     else:
         st.error(f"Failed: {search_response.status_code}, {search_response.text}")
 
 
-if st.button('add child'):
-    add_child_form("https://quest-tct.onrender.com/")
+# if st.button('add child'):
+#     add_child_form("https://quest-tct.onrender.com/")
 
 # Show select box if there are search results
 if st.session_state.children:
@@ -136,3 +136,18 @@ if response.status_code == 200:
     st.write(f"Total Children: {data['total_children']}")
     st.write(f"Checked In: {data['checked_in_children']}")
     st.write(f"Checked Out: {data['checked_out_children']}")
+
+
+
+# create a table to display all children and their details, with filter and search
+st.markdown("---")
+st.markdown("### All Children")
+# Get all children
+response = requests.get("https://quest-tct.onrender.com/")
+if response.status_code == 200:
+    children = response.json()
+    if children:
+        # Display children in a table
+        st.table(children)
+    else:
+        st.warning("No children found")

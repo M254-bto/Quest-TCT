@@ -28,7 +28,7 @@ def clean_and_post_csv(csv_file, api_endpoint):
 # Main script
 if __name__ == "__main__":
     # Replace with your CSV file path and Django API endpoint
-    csv_file_path = 'Docs/newliist.csv'
+    csv_file_path = 'Docs/visitors.csv'
     api_endpoint_url = 'http://localhost:8000/'  # Replace with your actual API endpoint
 
     clean_and_post_csv(csv_file_path, api_endpoint_url)
