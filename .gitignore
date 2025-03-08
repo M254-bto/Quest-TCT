@@ -4,6 +4,7 @@ __pycache__
 Docs
 .DS_Store
 .huskyrc.json
+.devcontainer
 out
 log.log
 **/node_modules

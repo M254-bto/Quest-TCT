@@ -101,7 +101,7 @@ WSGI_APPLICATION = 'Quest.wsgi.application'
 # }
 
 DATABASES = {
-	"default": dj_database_url.parse('postgres://avnadmin:AVNS_bOTnSwubgbhN3faK88u@pg-1f68c7c7-afribraintechnologies-d331.k.aivencloud.com:12471/defaultdb?sslmode=require'
+	"default": dj_database_url.parse('postgresql://postgres.heutrddwjybghcinjpsw:3nrgWthg3cxN5AVr@aws-0-us-west-1.pooler.supabase.com:6543/postgres'
 )
 }
 
