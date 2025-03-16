@@ -5,12 +5,12 @@ import requests
 
 def add_child_form(api_url):
     print("Form called")
-    """
-    Displays a form for adding a new child and sends a POST request to the given API URL.
+    # """
+    # Displays a form for adding a new child and sends a POST request to the given API URL.
 
-    Args:
-        api_url (str): The endpoint to which the new child data should be sent.
-    """
+    # Args:
+    #     api_url (str): The endpoint to which the new child data should be sent.
+    # """
     with st.form("add_child_form", clear_on_submit=True):
         print("Form displayed")
         new_name = st.text_input("Child's Name", key="new_name")
@@ -44,8 +44,6 @@ def add_child_form(api_url):
                 st.error(f"Failed: {add_response.status_code}, {add_response.text}")
 
 
-# add_child_form("http://localhost:8000/")
-
 
 
 
@@ -75,6 +73,8 @@ def check_in_form(api_url, child_id):
                     st.error(f"Error: {response_data.get('error')}")
             else:
                 st.error(f"Error checking in: {check_in_response.text}")
+
+
 
 
 def check_out_form(api_url):

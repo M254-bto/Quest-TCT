@@ -2,50 +2,6 @@ import streamlit as st
 import requests
 from forms import check_in_form, check_out_form, add_child_form
 
-# if st.button('add_child'):
-#     add_child_form("http://localhost:8000/")
-
-
-# def add_child_form(api_url):
-#     print("Form called")
-#     """
-    
-#     """
-#     with st.form("add_child_form", clear_on_submit=True):
-#         print("Form displayed")
-#         new_name = st.text_input("Child's Name", key="new_name")
-#         dob = st.date_input("Date of Birth", key="dob")
-#         age = st.number_input("Age", min_value=0, step=1, key="age")
-#         parent_name = st.text_input("Parent's Name", key="parent_name")
-#         parent_contact = st.text_input("Parent's Contact", key="parent_contact")
-#         residence = st.text_input("Residence", key="residence")
-#         room = st.text_input("Class", key="room")
-#         submit = st.form_submit_button("Add Child")
-
-#         if submit:
-#             print("form submitted")
-#             add_response = requests.post(api_url, json={
-#                 "name": new_name,
-#                 "date_of_birth": str(dob),
-#                 "age": age,
-#                 "parent_name": parent_name,
-#                 "parent_contacts": parent_contact,
-#                 "residence": residence,
-#                 "room": room
-#             })
-
-#             if add_response.ok:
-#                 response_data = add_response.json()
-#                 if "error" in response_data:
-#                     st.error(f"Error adding child: {response_data.get('error')}")
-#                 else:
-#                     st.success("Child added successfully!")
-#             else:
-#                 st.error(f"Failed: {add_response.status_code}, {add_response.text}")
-
-
-
-
 
 
 
@@ -100,9 +56,8 @@ if st.session_state.selected_child:
 
 st.markdown("---")
 
-st.title("Check-Out")
+# st.title("Check-Out")
 
-check_out_form("https://quest-tct.onrender.com/check-out/")
 
 
 
@@ -111,7 +66,13 @@ st.markdown("---")
 
 st.markdown("### Cards not checked out today")
 # Get cards not checked out today  and diplay card  number and name
-response = requests.get("https://quest-tct.onrender.com/unchecked/")
+import streamlit as st
+import requests
+
+API_URL = "https://quest-tct.onrender.com"
+
+# Fetch unchecked children
+response = requests.get(f"{API_URL}/unchecked/")
 if response.status_code == 200:
     children = response.json()
     if children:
@@ -119,9 +80,36 @@ if response.status_code == 200:
             card_number = child["card_number"]
             child_name = child["child_name"]
 
+            # Create a unique key for session state
+            confirm_key = f"confirm_{card_number}"
+
             st.markdown(f"**Card Number:** {card_number}")
             st.markdown(f"**Name:** {child_name}")
+
+            # Checkout button
+            if st.button(f"Checkout Card {card_number}", key=f"checkout_{card_number}"):
+                st.session_state[confirm_key] = True  # Set confirmation state
+
+            # Show confirmation popup
+            if st.session_state.get(confirm_key, False):
+                st.warning(f"Confirm Checkout for {child_name}?", icon="⚠️")
+                col1, col2 = st.columns([1, 1])
+                with col1:
+                    if st.button("OK", key=f"ok_{card_number}"):
+                        checkout_response = requests.post(f"{API_URL}/check-out/", json={"card_number": card_number})
+                        if checkout_response.status_code == 200:
+                            st.success(f"{child_name} checked out successfully!")
+                            st.session_state[confirm_key] = False  # Reset state
+                        else:
+                            st.error("Checkout failed. Please try again.")
+                with col2:
+                    if st.button("Cancel", key=f"cancel_{card_number}"):
+                        st.session_state[confirm_key] = False  # Reset state
+            
             st.markdown("---")  # Divider for neatness
+
+
+            
     else:
         st.warning("All children have been checked out today")
 
