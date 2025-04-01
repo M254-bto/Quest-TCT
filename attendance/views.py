@@ -8,6 +8,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.utils.timezone import now
+from datetime import timedelta
+from django.db.models import Q
+from collections import defaultdict
+from django.db.models import Count
 
 
 
@@ -129,3 +133,38 @@ class AttendanceCount(APIView):
             "checked_out_children": checked_out_children
         })
     
+
+class MonthlyAttendance(APIView):
+    def get(self, request):
+        # Get today's date
+        today = now().date()
+
+        # Calculate first and last day of this month
+        first_day_this_month = today.replace(day=1)
+        last_day_this_month = today
+
+        # Calculate first and last day of last month
+        first_day_last_month = (first_day_this_month - timedelta(days=1)).replace(day=1)
+        last_day_last_month = first_day_this_month - timedelta(days=1)
+
+        # Determine which period to return based on query param
+        period = request.query_params.get("period", "this_month")
+
+        if period == "last_month":
+            start_date, end_date = first_day_last_month, last_day_last_month
+        else:  # Default to this month
+            start_date, end_date = first_day_this_month, last_day_this_month
+
+        # Filter attendance records for the selected period
+        attendance_records = Attendance.objects.filter(check_in_time__date__range=[start_date, end_date])
+
+        # Serialize the data
+        serialized_data = AttendanceSerializer(attendance_records, many=True).data
+
+        # Group by date
+        grouped_attendance = defaultdict(list)
+        for record in serialized_data:
+            check_in_date = record["check_in_time"][:10]  # Extract YYYY-MM-DD
+            grouped_attendance[check_in_date].append(record)
+
+        return Response(grouped_attendance)

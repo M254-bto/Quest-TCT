@@ -2,8 +2,7 @@ import streamlit as st
 import requests
 from forms import check_in_form, check_out_form, add_child_form
 
-
-
+root_url = 'http://127.0.0.1:8000'
 
 # Initialize session state for search results and selected child
 if "children" not in st.session_state:
@@ -11,13 +10,19 @@ if "children" not in st.session_state:
 if "selected_child" not in st.session_state:
     st.session_state.selected_child = None
 
+
+st.title("✅ Child Check-In & Checkout")
+
+st.markdown("### 🔍 Search & Check-in")
+
+
 # Title
-st.title("Check-In")
+# st.title("Check-In")
 
 # Search for a child by name
 search_name = st.text_input("Search Child Name")
 if st.button("Search"):
-    search_response = requests.get("https://quest-tct.onrender.com/search/", params={"search": search_name})
+    search_response = requests.get(f"{root_url}/search/", params={"search": search_name})
     if search_response.status_code == 200:
         children = search_response.json()
         if children:
@@ -27,15 +32,13 @@ if st.button("Search"):
         else:
             st.session_state.children = []  # Clear previous results
             st.warning("No children found")
-            # add_child_form("https://quest-tct.onrender.com/")
+            # add_child_form(f"{root_url}/")
            
             
     else:
         st.error(f"Failed: {search_response.status_code}, {search_response.text}")
 
 
-# if st.button('add child'):
-#     add_child_form("https://quest-tct.onrender.com/")
 
 # Show select box if there are search results
 if st.session_state.children:
@@ -52,27 +55,17 @@ if st.session_state.children:
 if st.session_state.selected_child:
     st.write(f"Selected Child: {st.session_state.selected_child}")
     child_id = st.session_state.selected_child.split(":")[0]  # Extract child ID
-    check_in_form("https://quest-tct.onrender.com/check-in/", child_id)
-
-st.markdown("---")
-
-# st.title("Check-Out")
+    check_in_form(f"{root_url}/check-in/", child_id)
 
 
 
-
-
-st.markdown("---")
-
-st.markdown("### Cards not checked out today")
+st.markdown("### Kids Present Today")
 # Get cards not checked out today  and diplay card  number and name
-import streamlit as st
-import requests
 
-API_URL = "https://quest-tct.onrender.com"
+API_URL = f"{root_url}"
 
 # Fetch unchecked children
-response = requests.get(f"{API_URL}/unchecked/")
+response = requests.get(f"{root_url}/unchecked/")
 if response.status_code == 200:
     children = response.json()
     if children:
@@ -118,7 +111,7 @@ if response.status_code == 200:
 st.markdown("---")
 st.markdown("### Total Number of Children Checked In Today")
 # Get total number of children checked in today
-response = requests.get("https://quest-tct.onrender.com/count/")
+response = requests.get(f"{root_url}/count/")
 if response.status_code == 200:
     data = response.json()
     st.write(f"Total Children: {data['total_children']}")
@@ -127,15 +120,5 @@ if response.status_code == 200:
 
 
 
-# create a table to display all children and their details, with filter and search
-st.markdown("---")
-st.markdown("### All Children")
-# Get all children
-response = requests.get("https://quest-tct.onrender.com/")
-if response.status_code == 200:
-    children = response.json()
-    if children:
-        # Display children in a table
-        st.table(children)
-    else:
-        st.warning("No children found")
+
+

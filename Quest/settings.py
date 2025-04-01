@@ -94,8 +94,8 @@ WSGI_APPLICATION = 'Quest.wsgi.application'
 #         'ENGINE': 'django.db.backends.postgresql',
 #         'HOST' : 'aws-0-us-east-1.pooler.supabase.com',
 #         'NAME': 'postgres',
-#         'USER' : 'postgres.vacehxsjgutxtemyvmti',
-#         'PASSWORD' : 'NQJ8bVVpwNYDb8dw',
+#         'USER' : 'postgres.heutrddwjybghcinjpsw',
+#         'PASSWORD' : '8TwIJ330DalJni9A',
 #         'PORT' : 6543
 #     }
 # }
