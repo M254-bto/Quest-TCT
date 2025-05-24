@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 from forms import check_in_form, check_out_form, add_child_form
 
-root_url = 'https://quest-tct.onrender.com'
+root_url = 'http://127.0.0.1:8000/'
 
 # Initialize session state for search results and selected child
 if "children" not in st.session_state:
@@ -94,7 +94,11 @@ if response.status_code == 200:
                             st.success(f"{child_name} checked out successfully!")
                             st.session_state[confirm_key] = False  # Reset state
                         else:
-                            st.error("Checkout failed. Please try again.")
+                            try:
+                               error_message = checkout_response.json().get("error")
+                            except Exception:
+                                error_message = checkout_response.text or "Unknown error occurred."
+                            st.error(f"❌ {error_message}")
                 with col2:
                     if st.button("Cancel", key=f"cancel_{card_number}"):
                         st.session_state[confirm_key] = False  # Reset state

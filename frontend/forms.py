@@ -2,38 +2,35 @@
 
 import streamlit as st
 import requests
+from datetime import date
 
 def add_child_form(api_url):
     print("Form called")
-    # """
-    # Displays a form for adding a new child and sends a POST request to the given API URL.
-
-    # Args:
-    #     api_url (str): The endpoint to which the new child data should be sent.
-    # """
+    
     with st.form("add_child_form", clear_on_submit=True):
         print("Form displayed")
+        
+        # Only collect the required fields - let server calculate age and room
         new_name = st.text_input("Child's Name", key="new_name")
-        dob = st.date_input("Date of Birth", key="dob")
-        age = st.number_input("Age", min_value=0, step=1, key="age")
+        dob = st.date_input("Date of Birth", key="dob", max_value=date.today())
         parent_name = st.text_input("Parent's Name", key="parent_name")
         parent_contact = st.text_input("Parent's Contact", key="parent_contact")
         residence = st.text_input("Residence", key="residence")
-        room = st.text_input("Class", key="room")
+        
         submit = st.form_submit_button("Add Child")
-
+        
         if submit:
             print("form submitted")
+            
+            # Send only the collected data - let Django model calculate the rest
             add_response = requests.post(api_url, json={
                 "name": new_name,
                 "date_of_birth": str(dob),
-                "age": age,
                 "parent_name": parent_name,
                 "parent_contacts": parent_contact,
-                "residence": residence,
-                "room": room
+                "residence": residence
             })
-
+            
             if add_response.ok:
                 response_data = add_response.json()
                 if "error" in response_data:

@@ -86,16 +86,20 @@ class CheckOutView(APIView):
 
         # Find the attendance record by card number
         try:
-            attendance = Attendance.objects.get(card_number=card_number, check_out_time__isnull=True)
+            attendances = Attendance.objects.filter(card_number=card_number, check_out_time__isnull=True)
         except Attendance.DoesNotExist:
             return Response({"error": "Attendance record not found or already checked out"}, status=status.HTTP_404_NOT_FOUND)
 
         # Mark as checked out and set card number to empty
-        attendance.check_out_time = now()
-        # attendance.card_number = ''
-        attendance.card_number = ''
-        attendance.save()
-        return Response({"message": "Check-out successful"}, status=status.HTTP_200_OK)
+        for attendance in attendances:
+            attendance.check_out_time = now()
+            # attendance.card_number = ''
+            attendance.card_number = ''
+            attendance.save()
+        return Response(
+            {"message": f"Checked out {attendances.count()} record(s) successfully"},
+            status=status.HTTP_200_OK
+        )
     
         
     
