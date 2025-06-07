@@ -17,7 +17,7 @@ from rest_framework.filters import SearchFilter
 
 
 class PrefixSearchFilter(SearchFilter):
-    def construct_search(self, search_fields):
+    def construct_search(self, search_fields, lookup_prefix=None):
         return f"{search_fields}__istartswith"
 
 
