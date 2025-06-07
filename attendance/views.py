@@ -12,11 +12,13 @@ from datetime import timedelta
 from django.db.models import Q
 from collections import defaultdict
 from django.db.models import Count
+from rest_framework.filters import SearchFilter
 
 
 
-
-
+class PrefixSearchFilter(SearchFilter):
+    def construct_search(self, field_name):
+        return f"{field_name}__istartswith"
 
 
 class ChildViewSet(viewsets.ModelViewSet):
@@ -28,7 +30,7 @@ class ChildViewSet(viewsets.ModelViewSet):
 class SearchChildView(ListAPIView):
     queryset = Child.objects.all()
     serializer_class = ChildSerializer
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [PrefixSearchFilter]
     search_fields = ['name']
 
 
