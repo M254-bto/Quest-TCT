@@ -17,8 +17,8 @@ from rest_framework.filters import SearchFilter
 
 
 class PrefixSearchFilter(SearchFilter):
-    def construct_search(self, field_name):
-        return f"{field_name}__istartswith"
+    def construct_search(self, search_fields):
+        return f"{search_fields}__istartswith"
 
 
 class ChildViewSet(viewsets.ModelViewSet):
